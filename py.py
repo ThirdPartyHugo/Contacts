@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, jsonify
 import jwt
 import time
+import os
 
 app = Flask(__name__)
 
@@ -58,5 +59,8 @@ def sso_login():
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
 
+
+
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Use $PORT or default to 5000
+    app.run(host="0.0.0.0", port=port, debug=True)
