@@ -2,8 +2,11 @@ from flask import Flask, request, redirect, jsonify
 import jwt
 import time
 import os
+from flask_cors import CORS 
 
 app = Flask(__name__)
+CORS(app, origins=["https://servicevault.io"])
+
 
 PRIVATE_KEY = """-----BEGIN PRIVATE KEY-----
 MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAJSV0lvDePfGkjWr
