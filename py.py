@@ -59,7 +59,9 @@ def sso_login():
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
 
-
+@app.route('/test', methods=['GET'])
+def test_endpoint():
+    return "Hello, world!"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Use $PORT or default to 5000
