@@ -41,12 +41,12 @@ def sso_login():
         return jsonify({"error": "Missing state or nonce"}), 400
 
     # Retrieve the GHL cookie from the browser
-    ghl_cookie = request.cookies.get('a')
+    #ghl_cookie = request.cookies.get('a')
 
-    if not ghl_cookie:
-        return jsonify({"error": "Missing GHL cookie"}), 400
+    #if not ghl_cookie:
+        #return jsonify({"error": "Missing GHL cookie"}), 400
 
-    try:
+    """try:
         # Decode the GHL cookie from Base64
         decoded_cookie = base64.b64decode(ghl_cookie).decode('utf-8')
         ghl_data = json.loads(decoded_cookie)
@@ -58,7 +58,7 @@ def sso_login():
         if not ghl_user_id or not ghl_api_key:
             return jsonify({"error": "Invalid GHL cookie data"}), 400
     except Exception as e:
-        return jsonify({"error": f"Failed to process GHL cookie: {str(e)}"}), 400
+        return jsonify({"error": f"Failed to process GHL cookie: {str(e)}"}), 400"""
 
     current_time = int(time.time())
     expiration_time = current_time + 900 
@@ -67,11 +67,10 @@ def sso_login():
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": ghl_user_id,
+        "sub": "hpskate26@gmail.com",
         "name": "Hugo",
         "email": "hpskate26@gmail.com",
-        "nonce": nonce,
-        "api_key": ghl_api_key
+        "nonce": nonce
     }
 
     # Generate the JWT token
