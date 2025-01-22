@@ -2,6 +2,8 @@ from flask import Flask, request, redirect, jsonify
 import jwt
 import time
 import os
+import base64
+import json
 
 app = Flask(__name__)
 
@@ -24,6 +26,7 @@ N4nUaBkRIkpz
 
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
 
+
 @app.route('/sso/login', methods=['GET'])
 def sso_login():
     # Capture all relevant query params
@@ -37,6 +40,26 @@ def sso_login():
     if not state or not nonce:
         return jsonify({"error": "Missing state or nonce"}), 400
 
+    # Retrieve the GHL cookie from the browser
+    ghl_cookie = request.cookies.get('a')
+
+    if not ghl_cookie:
+        return jsonify({"error": "Missing GHL cookie"}), 400
+
+    try:
+        # Decode the GHL cookie from Base64
+        decoded_cookie = base64.b64decode(ghl_cookie).decode('utf-8')
+        ghl_data = json.loads(decoded_cookie)
+
+        # Extract the user_id and api_key
+        ghl_user_id = ghl_data.get("userid")
+        ghl_api_key = ghl_data.get("apikey")
+
+        if not ghl_user_id or not ghl_api_key:
+            return jsonify({"error": "Invalid GHL cookie data"}), 400
+    except Exception as e:
+        return jsonify({"error": f"Failed to process GHL cookie: {str(e)}"}), 400
+
     current_time = int(time.time())
     expiration_time = current_time + 900 
 
@@ -44,21 +67,20 @@ def sso_login():
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": "hpskate26@gmail.com",  
+        "sub": ghl_user_id,
         "name": "Hugo",
         "email": "hpskate26@gmail.com",
-        "nonce": nonce
+        "nonce": nonce,
+        "api_key": ghl_api_key
     }
 
-    
+    # Generate the JWT token
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
-    
+    # Redirect the user to the Freshdesk SSO URL
     redirect_url = f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"
-
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
-
 
 
 if __name__ == "__main__":
