@@ -8,22 +8,7 @@ app = Flask(__name__)
 CORS(app, origins=["https://servicevault.io"])
 
 
-PRIVATE_KEY = """-----BEGIN PRIVATE KEY-----
-MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAJSV0lvDePfGkjWr
-I1tpPfkNbsD4JiqTN6qPqestJVo3xGvviICjdkOR2W64vgCwVpJhiaXnwlIJJ95m
-yEMoHpFOad+oBqtcHxhRxcjxboDvcwxznH4qoeqN+B/p7Abm+qb88lQVTv7teclz
-6G5p3nnhNz/IKS0qJ7DCZgODm6jVAgMBAAECgYAbu3rvtaQ2WtGfQrnurc3rVh59
-1dMJz0BsjTPhuSNnm1EF9Ec9+0RviCFVERYlesQtvha66G7UcPEICZcHMc3CeAw0
-srRLdxYKt+eG87zqTeJYg9obeBV1mdCh376vxeM5XrKu+2er4UFluFLpBihv4KgD
-G+BK5Mr2zjR+NP93YQJBANW8O+2pF8C7bMqK8JevEYNw0wg0RJkQpL/ruhddHPub
-7NKzx0LDTBv7UP8pyC6U8judl65q2HYynEdjSr1tDNMCQQCx94tOWkQsr9ASJkZz
-c3aQE4DIRpXxpxZFIL842JfIe1+LmoR9r+DXlBckszxkx3plpPaLMIstuTt3l88t
-s8q3AkAYPBKzfPPTh6zrPlvPZyteMwHKsVqB3JBBrrHYClfJ88EjlvzmBgzwM0vY
-0tz+4yagOdtEDJtks5JiydBksCO/AkAudQR0i7PIRoz2b+9sK/QDYFP59BMoZgm2
-OfoxCLl2qF4kv01e0g7Lt+jit7dIR5p39jw10ZJDeVtAuOxobcq5AkBBsb7VeThO
-p5p4zeSB06qrJL4GF/hMW9W6aafNHuZqqBUCL6rRpxjUY8JY+0aO/0VaOoPhP8zp
-N4nUaBkRIkpz
------END PRIVATE KEY-----"""
+PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
 
