@@ -27,46 +27,37 @@ FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/8004930659284
 @app.route('/sso/login', methods=['GET'])
 def sso_login():
     # Capture all relevant query params
-    client_id = request.args.get('client_id')
-    state = request.args.get('state')
-    nonce = request.args.get('nonce')
-    grant_type = request.args.get('grant_type')
-    scope = request.args.get('scope')
-
-    # Capture the additional parameters (name and email)
-    name = request.args.get('name')
-    email = request.args.get('email')
+    client_id = request.args.get('client_id')       
+    state = request.args.get('state')               
+    nonce = request.args.get('nonce')               
+    grant_type = request.args.get('grant_type')     
+    scope = request.args.get('scope')               
 
     # Validate the important ones
     if not state or not nonce:
         return jsonify({"error": "Missing state or nonce"}), 400
 
-    if not name or not email:
-        return jsonify({"error": "Missing name or email"}), 400
-
-    # Current timestamp
     current_time = int(time.time())
-    expiration_time = current_time + 900  # JWT expiration time (15 minutes)
+    expiration_time = current_time + 900 
 
-    # Generate the JWT payload
+    # Generate a JWT payload
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": email,  # Use email as the subject
-        "name": name,  # Include name
-        "email": email,  # Include email
-        "nonce": nonce  # Include nonce
+        "sub": "hpskate26@gmail.com",  
+        "name": "Hugo",
+        "email": "hpskate26@gmail.com",
+        "nonce": nonce
     }
 
-    # Encode the payload to generate the JWT token
+    
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
-    # Redirect to the Freshdesk SSO URL with the state and token
+    
     redirect_url = f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"
 
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
-
 
 
 
