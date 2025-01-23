@@ -47,9 +47,20 @@ def sso_login():
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
 
-@app.route('/test', methods=['GET'])
+@app.route('/test', methods=['POST'])
 def test_endpoint():
-    return "Hello, world!"
+    # Get the JSON payload from the request
+    data = request.get_json()
+
+    # Extract 'name' and 'email' from the payload
+    name = data.get('name')
+    email = data.get('email')
+
+    if name and email:
+        return jsonify({"message": f"Hello {name}, your email is {email}!"}), 200
+    else:
+        return jsonify({"error": "Name and email are required."}), 400
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Use $PORT or default to 5000
