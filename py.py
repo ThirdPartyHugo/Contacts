@@ -47,19 +47,19 @@ def sso_login():
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
 
-@app.route('/test', methods=['POST'])
 def test_endpoint():
-    # Get the JSON payload from the request
-    data = request.get_json()
+    try:
+        # Get the JSON payload from the request
+        data = request.get_json()
 
-    # Extract 'name' and 'email' from the payload
-    name = data.get('name')
-    email = data.get('email')
+        # Print the received data (for debugging purposes)
+        print(f"Received data: {data}")
 
-    if name and email:
-        return jsonify({"message": f"Hello {name}, your email is {email}!"}), 200
-    else:
-        return jsonify({"error": "Name and email are required."}), 400
+        # Respond with a confirmation message
+        return jsonify({"message": "Data received successfully!", "data": data}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == "__main__":
