@@ -47,6 +47,7 @@ def sso_login():
     print(f"Redirecting user to: {redirect_url}")
     return redirect(redirect_url)
 
+@app.route('/test', methods=['POST'])
 def test_endpoint():
     try:
         # Get the JSON payload from the request
