@@ -17,26 +17,7 @@ FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/8004930659284
 
 
 
-# Configure Selenium to run in headless mode
-options = Options()
-options.add_argument("--headless")
-options.add_argument("--disable-gpu")
 
-# Initialize the WebDriver
-driver = webdriver.Chrome(options=options)
-
-# Load a page that redirects
-url = "https://kyrusagency.freshdesk.com/support/login"  # This URL redirects 3 times before landing
-driver.get(url)
-
-# Print the final URL after redirection
-print("Final URL:", driver.current_url)
-
-# Print the page content (if needed)
-print("Page Content:", driver.page_source[:500])  # Limit output for clarity
-
-# Clean up
-driver.quit()
 
 
 @app.route('/sso/login', methods=['GET'])
@@ -76,6 +57,28 @@ def sso_login():
 
 @app.route('/test', methods=['POST'])
 def test_endpoint():
+        # Configure Selenium to run in headless mode
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+
+    # Initialize the WebDriver
+    driver = webdriver.Chrome(options=options)
+
+    # Load a page that redirects
+    url = "https://kyrusagency.freshdesk.com/support/login"  # This URL redirects 3 times before landing
+    driver.get(url)
+
+    # Print the final URL after redirection
+    print("Final URL:", driver.current_url)
+
+    # Print the page content (if needed)
+    print("Page Content:", driver.page_source[:500])  # Limit output for clarity
+
+    # Clean up
+    driver.quit()
+
+
     try:
         # Get the JSON payload from the request
         data = request.get_json()
