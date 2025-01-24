@@ -3,6 +3,7 @@ import jwt
 import time
 import os
 from flask_cors import CORS 
+import requests
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -11,6 +12,17 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
+
+
+# Send a GET request to the page
+url = "https://kyrusagency.freshdesk.com/support/login"
+response = requests.get(url)
+
+# Check the response
+if response.status_code == 200:
+    print(response.text)  # HTML content
+else:
+    print(f"Failed to load page: {response.status_code}")
 
 @app.route('/sso/login', methods=['GET'])
 def sso_login():
