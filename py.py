@@ -15,14 +15,21 @@ FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/8004930659284
 
 
 # Send a GET request to the page
-url = "https://kyrusagency.freshdesk.com/support/login"
-response = requests.get(url)
+import requests
 
-# Check the response
+url = "https://kyrusagency.freshdesk.com/support/login"
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+}
+
+response = requests.get(url, headers=headers)
+
 if response.status_code == 200:
-    print(response.text)  # HTML content
+    print(response.text)  # Still static HTML
 else:
     print(f"Failed to load page: {response.status_code}")
+
 
 @app.route('/sso/login', methods=['GET'])
 def sso_login():
