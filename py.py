@@ -113,7 +113,6 @@ def test_endpoint():
             <script>
               {cookie_scripts}
               console.log("Cookies set successfully!");
-              window.location.href = "https://kyrusagency.freshdesk.com/support/home";
             </script>
             """
             return script, 200, {'Content-Type': 'text/html'}
