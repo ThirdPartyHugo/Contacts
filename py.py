@@ -47,8 +47,8 @@ def sso_login():
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
     # Store the JWT token in a session cookie
-    print(f"Redirecting user to: {FRESHDESK_SSO_URL}?state={state}&id_token={token}")
-    print(token)
+    print(f"Redirecting user to: {FRESHDESK_SSO_URL}?state={state}&id_token={token}",flush=True)
+    print(token,flush=True)
     response = make_response(redirect(f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"))
 
     
