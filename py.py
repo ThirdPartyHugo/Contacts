@@ -48,16 +48,16 @@ def sso_login():
 
     # Store the JWT token in a session cookie
     response = make_response(redirect(f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"))
-    response.set_cookie("sso_token", token, max_age=expiration_time, secure=True, httponly=True, samesite="None")
 
     print(f"Redirecting user to: {FRESHDESK_SSO_URL}?state={state}&id_token={token}")
+    print(token)
     return response
 
 
 @app.route('/test', methods=['POST'])
 def test_endpoint():
         # Configure Selenium to run in headless mode
-    options = Options()
+    """options = Options()
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
 
@@ -75,7 +75,7 @@ def test_endpoint():
     print("Page Content:", driver.page_source[:500])  # Limit output for clarity
 
     # Clean up
-    driver.quit()
+    driver.quit()"""
 
 
     try:
