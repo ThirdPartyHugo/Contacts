@@ -88,7 +88,12 @@ def test_endpoint():
         print(driver.current_url,flush=True)
 
         # Print the page content (if needed)
-        print("Page Content:", driver.page_source[:500])  # Limit output for clarity
+        cookies = driver.get_cookies()
+
+        # Filter and print the specific cookies
+        for cookie in cookies:
+            if cookie['name'] in ['_helpkit_session', 'session_token']:
+                print(f"{cookie['name']}: {cookie['value']}", flush=True)
 
         # Clean up
         driver.quit()
