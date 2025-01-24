@@ -91,14 +91,35 @@ def test_endpoint():
         cookies = driver.get_cookies()
 
         # Filter and print the specific cookies
+        extracted_cookies = {}
         for cookie in cookies:
             if cookie['name'] in ['_helpkit_session', 'session_token']:
+                extracted_cookies[cookie['name']] = cookie['value']
                 print(f"{cookie['name']}: {cookie['value']}", flush=True)
 
         # Clean up
         driver.quit()
         # Respond with a confirmation message
-        return jsonify({"message": "Data received successfully!", "data": data}), 200
+        # If cookies were found, generate JavaScript to set them
+        if extracted_cookies:
+            cookie_scripts = ""
+            for name, value in extracted_cookies.items():
+                cookie_scripts += f"""
+                document.cookie = "{name}={value}; path=/; domain=kyrusagency.freshdesk.com; SameSite=None; Secure";
+                """
+
+            # JavaScript response to set cookies and redirect the user
+            script = f"""
+            <script>
+              {cookie_scripts}
+              console.log("Cookies set successfully!");
+              window.location.href = "https://kyrusagency.freshdesk.com/support/home";
+            </script>
+            """
+            return script, 200, {'Content-Type': 'text/html'}
+
+        # If no cookies found, return an error
+        return jsonify({"error": "Required cookies not found!"}), 400
         
 
     except Exception as e:
