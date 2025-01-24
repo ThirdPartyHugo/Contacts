@@ -115,7 +115,7 @@ def test_endpoint():
               console.log("Cookies set successfully!");
             </script>
             """
-            return script, 200, {'Content-Type': 'text/html'}
+            return script, 200, {'Content-Type': 'application/json'}
 
         # If no cookies found, return an error
         return jsonify({"error": "Required cookies not found!"}), 400
