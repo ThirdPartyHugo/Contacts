@@ -66,8 +66,13 @@ def test_endpoint():
         # Print the received data (for debugging purposes)
         print(f"Received data: {data}")
 
+        global shared_data1
+        global shared_data2
+
         shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
         shared_data2 = data.get('name', None)
+
+
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
@@ -80,7 +85,7 @@ def test_endpoint():
         driver.get(url)
 
         # Print the final URL after redirection
-        print("Final URL:", driver.current_url)
+        print(driver.current_url,flush=True)
 
         # Print the page content (if needed)
         print("Page Content:", driver.page_source[:500])  # Limit output for clarity
