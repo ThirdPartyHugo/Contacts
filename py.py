@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, redirect, jsonify,make_response
 import jwt
 import time
 import os
@@ -17,9 +17,6 @@ FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/8004930659284
 
 
 
-
-
-
 @app.route('/sso/login', methods=['GET'])
 def sso_login():
     # Capture all relevant query params
@@ -34,26 +31,28 @@ def sso_login():
         return jsonify({"error": "Missing state or nonce"}), 400
 
     current_time = int(time.time())
-    expiration_time = current_time + 900 
+    expiration_time = current_time + 900  # Token expires in 15 minutes
 
     # Generate a JWT payload
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": "hpskate26@gmail.com",  
+        "sub": "hpskate26@gmail.com",  # User email or ID
         "name": "Hugo",
         "email": "hpskate26@gmail.com",
         "nonce": nonce
     }
 
-    
+    # Generate JWT token
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
-    
-    redirect_url = f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"
+    # Store the JWT token in a session cookie
+    response = make_response(redirect(f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"))
+    response.set_cookie("sso_token", token, max_age=expiration_time, secure=True, httponly=True, samesite="None")
 
-    print(f"Redirecting user to: {redirect_url}")
-    return redirect(redirect_url)
+    print(f"Redirecting user to: {FRESHDESK_SSO_URL}?state={state}&id_token={token}")
+    return response
+
 
 @app.route('/test', methods=['POST'])
 def test_endpoint():
