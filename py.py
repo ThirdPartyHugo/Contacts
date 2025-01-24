@@ -17,7 +17,7 @@ FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/8004930659284
 
 
 
-#@app.route('/sso/login', methods=['GET'])
+@app.route('/sso/login', methods=['GET'])
 def sso_login():
     # Capture all relevant query params
     client_id = request.args.get('client_id')       
