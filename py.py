@@ -68,7 +68,7 @@ def test_endpoint():
 
         shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
         shared_data2 = data.get('name', None)
-        """options = Options()
+        options = Options()
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
 
@@ -86,7 +86,7 @@ def test_endpoint():
         print("Page Content:", driver.page_source[:500])  # Limit output for clarity
 
         # Clean up
-        driver.quit()"""
+        driver.quit()
         # Respond with a confirmation message
         return jsonify({"message": "Data received successfully!", "data": data}), 200
         
