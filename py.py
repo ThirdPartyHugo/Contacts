@@ -33,7 +33,7 @@ def sso_login():
 
     current_time = int(time.time())
     expiration_time = current_time + 900  # Token expires in 15 minutes
-
+    print(shared_data1,flush=True)
     # Generate a JWT payload
     payload = {
         "iat": current_time,
