@@ -3,7 +3,8 @@ import jwt
 import time
 import os
 from flask_cors import CORS 
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -14,21 +15,28 @@ PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
 
 
-# Send a GET request to the page
-import requests
 
-url = "https://kyrusagency.freshdesk.com/support/login"
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
-}
+# Configure Selenium to run in headless mode
+options = Options()
+options.add_argument("--headless")
+options.add_argument("--disable-gpu")
 
-response = requests.get(url, headers=headers)
+# Initialize the WebDriver
+driver = webdriver.Chrome(options=options)
 
-if response.status_code == 200:
-    print(response.text)  # Still static HTML
-else:
-    print(f"Failed to load page: {response.status_code}")
+# Load a page that redirects
+url = "https://kyrusagency.freshdesk.com/support/login"  # This URL redirects 3 times before landing
+driver.get(url)
+
+# Print the final URL after redirection
+print("Final URL:", driver.current_url)
+
+# Print the page content (if needed)
+print("Page Content:", driver.page_source[:500])  # Limit output for clarity
+
+# Clean up
+driver.quit()
 
 
 @app.route('/sso/login', methods=['GET'])
