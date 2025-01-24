@@ -102,20 +102,12 @@ def test_endpoint():
         # Respond with a confirmation message
         # If cookies were found, generate JavaScript to set them
         if extracted_cookies:
-            cookie_scripts = ""
-            for name, value in extracted_cookies.items():
-                cookie_scripts += f"""
-                document.cookie = "{name}={value}; path=/; domain=kyrusagency.freshdesk.com; SameSite=None; Secure";
-                """
+            # Prepare an array with both cookies
+            cookies_array = [{"name": name, "value": value} for name, value in extracted_cookies.items()]
+            
+            # Return the cookies array as JSON
+            return jsonify(cookies_array), 200, {'Content-Type': 'application/json'}
 
-            # JavaScript response to set cookies and redirect the user
-            script = f"""
-            <script>
-              {cookie_scripts}
-              console.log("Cookies set successfully!");
-            </script>
-            """
-            return script, 200, {'Content-Type': 'text/html'}
 
         # If no cookies found, return an error
         return jsonify({"error": "Required cookies not found!"}), 400
