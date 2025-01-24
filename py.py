@@ -5,7 +5,7 @@ import os
 from flask_cors import CORS 
 
 app = Flask(__name__)
-CORS(app, origins=["https://servicevault.io"])
+CORS(app, origins=["https://book.kyrusagency.com/"])
 
 
 PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
