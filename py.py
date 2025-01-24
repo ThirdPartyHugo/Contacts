@@ -14,7 +14,8 @@ PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
 
-
+shared_data1 = None
+shared_data2 = None
 
 
 @app.route('/sso/login', methods=['GET'])
@@ -37,9 +38,9 @@ def sso_login():
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": "hpskate26@gmail.com",  # User email or ID
-        "name": "Hugo",
-        "email": "hpskate26@gmail.com",
+        "sub": shared_data1,  # User email or ID
+        "name": shared_data2,
+        "email": shared_data1,
         "nonce": nonce
     }
 
@@ -57,27 +58,6 @@ def sso_login():
 
 @app.route('/test', methods=['POST'])
 def test_endpoint():
-        # Configure Selenium to run in headless mode
-    """options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-
-    # Initialize the WebDriver
-    driver = webdriver.Chrome(options=options)
-
-    # Load a page that redirects
-    url = "https://kyrusagency.freshdesk.com/support/login"  # This URL redirects 3 times before landing
-    driver.get(url)
-
-    # Print the final URL after redirection
-    print("Final URL:", driver.current_url)
-
-    # Print the page content (if needed)
-    print("Page Content:", driver.page_source[:500])  # Limit output for clarity
-
-    # Clean up
-    driver.quit()"""
-
 
     try:
         # Get the JSON payload from the request
@@ -86,11 +66,37 @@ def test_endpoint():
         # Print the received data (for debugging purposes)
         print(f"Received data: {data}")
 
+        shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
+        shared_data2 = data.get('name', None)
+        """options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
+
+        # Initialize the WebDriver
+        driver = webdriver.Chrome(options=options)
+
+        # Load a page that redirects
+        url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  # This URL redirects 3 times before landing
+        driver.get(url)
+
+        # Print the final URL after redirection
+        print("Final URL:", driver.current_url)
+
+        # Print the page content (if needed)
+        print("Page Content:", driver.page_source[:500])  # Limit output for clarity
+
+        # Clean up
+        driver.quit()"""
         # Respond with a confirmation message
         return jsonify({"message": "Data received successfully!", "data": data}), 200
+        
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+
+    
+
 
 
 if __name__ == "__main__":
