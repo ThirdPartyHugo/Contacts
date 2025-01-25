@@ -101,7 +101,7 @@ def test_endpoint():
         # Filter and print the specific cookies
         extracted_cookies = {}
         for cookie in cookies:
-            if cookie['name'] in ['_helpkit_session', 'session_token']:
+            if cookie['name'] in ['_helpkit_session', 'session_token','user_credentials','session_state']:
                 extracted_cookies[cookie['name']] = cookie['value']
                 print(f"{cookie['name']}: {cookie['value']}", flush=True)
 
