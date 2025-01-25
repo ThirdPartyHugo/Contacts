@@ -5,7 +5,6 @@ import os
 from flask_cors import CORS 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from playwright.sync_api import sync_playwright
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -60,46 +59,67 @@ def sso_login():
 
 @app.route('/test', methods=['POST'])
 def test_endpoint():
+
     try:
         # Get the JSON payload from the request
         data = request.get_json()
+
+        # Print the received data (for debugging purposes)
         print(f"Received data: {data}")
 
-        # Extract shared data (if needed)
-        shared_data1 = data.get('email', None)
+        global shared_data1
+        global shared_data2
+
+        shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
         shared_data2 = data.get('name', None)
 
-        # Use Playwright instead of Selenium
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context()
-            context.set_default_navigation_timeout(15000)  # Set a timeout of 15 seconds
-            
-            # Block unnecessary resources (images, fonts, etc.)
-            context.route("**/*", lambda route: route.continue_() if route.request.resource_type in ["document", "script", "xhr"] else route.abort())
-            
-            page = context.new_page()
-            
-            # Navigate to the URL
-            url = "https://kyrusagency.freshdesk.com/support/login?type=bot"
-            page.goto(url)
 
-            # Wait for page to finish loading
-            page.wait_for_load_state("networkidle")
+        options = Options()
+        options.add_argument("--headless")  # Headless mode
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-popup-blocking")
+        options.add_argument("--disable-notifications")
+        options.add_argument("--blink-settings=imagesEnabled=false") 
+       
 
-            # Extract cookies
-            cookies = page.context.cookies()
-            extracted_cookies = {cookie['name']: cookie['value'] for cookie in cookies if cookie['name'] in ['_helpkit_session', 'session_token']}
-            
-            browser.close()
+        # Initialize the WebDriver
+        driver = webdriver.Chrome(options=options)
 
-        # Return the cookies if found
+        # Load a page that redirects
+        url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  # This URL redirects 3 times before landing
+        driver.get(url)
+
+        # Print the final URL after redirection
+        print(driver.current_url,flush=True)
+
+        # Print the page content (if needed)
+        cookies = driver.get_cookies()
+
+        # Filter and print the specific cookies
+        extracted_cookies = {}
+        for cookie in cookies:
+            if cookie['name'] in ['_helpkit_session', 'session_token']:
+                extracted_cookies[cookie['name']] = cookie['value']
+                print(f"{cookie['name']}: {cookie['value']}", flush=True)
+
+        # Clean up
+        driver.quit()
+        # Respond with a confirmation message
+        # If cookies were found, generate JavaScript to set them
         if extracted_cookies:
+            # Prepare an array with both cookies
             cookies_array = [{"name": name, "value": value} for name, value in extracted_cookies.items()]
+            
+            # Return the cookies array as JSON
             return jsonify(cookies_array), 200, {'Content-Type': 'application/json'}
+
 
         # If no cookies found, return an error
         return jsonify({"error": "Required cookies not found!"}), 400
+        
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
