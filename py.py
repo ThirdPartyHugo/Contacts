@@ -38,9 +38,9 @@ def sso_login():
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": "hpskate26@gmail.com",  # User email or ID
-        "name": "Hugo",
-        "email": "hpskate26@gmail.com",
+        "sub": shared_data1,  # User email or ID
+        "name": shared_data2,
+        "email": shared_data1,
         "nonce": nonce
     }
 
