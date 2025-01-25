@@ -60,45 +60,41 @@ def sso_login():
 @app.route('/test', methods=['POST'])
 def test_endpoint():
 
+    options = Options()
+    options.add_argument("--headless")  # Headless mode
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-popup-blocking")
+    options.add_argument("--disable-notifications")
+    options.add_argument("--blink-settings=imagesEnabled=false")  # Disable image loading
+
+    # Initialize the driver
+    driver = webdriver.Chrome(options=options)
+    
     try:
-        # Get the JSON payload from the request
-        data = request.get_json()
-
-        # Print the received data (for debugging purposes)
-        print(f"Received data: {data}")
-
-        global shared_data1
-        global shared_data2
-
-        shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
-        shared_data2 = data.get('name', None)
-
-
-        options = Options()
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
-
-        # Initialize the WebDriver
-        driver = webdriver.Chrome(options=options)
-
-        # Load a page that redirects
-        url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  # This URL redirects 3 times before landing
+        # Set a timeout for loading the page
+        driver.set_page_load_timeout(10)
+        
+        # Load the URL
+        url = "https://kyrusagency.freshdesk.com/support/login?type=bot"
         driver.get(url)
 
-        # Print the final URL after redirection
-        print(driver.current_url,flush=True)
-
-        # Print the page content (if needed)
+        # Get cookies after all redirects
         cookies = driver.get_cookies()
 
-        # Filter and print the specific cookies
-        extracted_cookies = {}
-        for cookie in cookies:
-            if cookie['name'] in ['_helpkit_session', 'session_token']:
-                extracted_cookies[cookie['name']] = cookie['value']
-                print(f"{cookie['name']}: {cookie['value']}", flush=True)
+        # Extract specific cookies
+        extracted_cookies = {
+            cookie['name']: cookie['value']
+            for cookie in cookies
+            if cookie['name'] in ['_helpkit_session', 'session_token']
+        }
 
-        # Clean up
+        return extracted_cookies
+
+    finally:
+        # Clean up and close the browser
         driver.quit()
         # Respond with a confirmation message
         # If cookies were found, generate JavaScript to set them
@@ -114,8 +110,7 @@ def test_endpoint():
         return jsonify({"error": "Required cookies not found!"}), 400
         
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    
     
 
     
