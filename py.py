@@ -35,12 +35,14 @@ def sso_login():
     expiration_time = current_time + 900  # Token expires in 15 minutes
     print(shared_data1,flush=True)
     # Generate a JWT payload
+    shared_data1 = shared_data1.replace(" ", "") if isinstance(shared_data1, str) else shared_data1
+    shared_data2 = shared_data2.replace(" ", "") if isinstance(shared_data2, str) else shared_data2
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": "business@kyrusagency.com",  # User email or ID
-        "name": "Kyrus",
-        "email": "business@kyrusagency.com",
+        "sub": shared_data2,  # User email or ID
+        "name": shared_data1,
+        "email": shared_data2,
         "nonce": nonce
     }
 
