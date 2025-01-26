@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify,make_response,session
+from flask import Flask, request, redirect, jsonify,make_response
 import jwt
 import time
 import os
@@ -14,6 +14,8 @@ PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
 
+shared_data1 = None
+shared_data2 = None
 
 
 @app.route('/sso/login', methods=['GET'])
@@ -35,9 +37,9 @@ def sso_login():
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub":  session.get('email'),  
-        "name": session.get('name'),
-        "email":  session.get('email'),
+        "sub": shared_data1,  
+        "name": shared_data2,
+        "email": shared_data1,
         "nonce": nonce
     }
 
@@ -57,10 +59,11 @@ def test_endpoint():
         
         data = request.get_json()
 
-        session['email'] = data.get('email', None)  # Store email in session
-        session['name'] = data.get('name', None) 
+        global shared_data1
+        global shared_data2
 
-        
+        shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
+        shared_data2 = data.get('name', None)
 
 
         options = Options()
@@ -79,18 +82,15 @@ def test_endpoint():
 
         # Load a page that redirects
         url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  
-       
         driver.get(url)
 
         cookies = driver.get_cookies()
-        
 
         # Filter and print the specific cookies
         extracted_cookies = {}
         for cookie in cookies:
             if cookie['name'] in ['_helpkit_session', 'session_token','user_credentials','session_state']:
                 extracted_cookies[cookie['name']] = cookie['value']
-       
 
         driver.quit()
 
@@ -115,4 +115,5 @@ def test_endpoint():
 
 
 if __name__ == "__main__":
-    pass
+    port = int(os.environ.get("PORT", 5000))  # Use $PORT or default to 5000
+    app.run(host="0.0.0.0", port=port)
