@@ -86,6 +86,7 @@ def test_endpoint():
         driver.get(url)
 
         cookies = driver.get_cookies()
+        driver.delete_all_cookies()
 
         # Filter and print the specific cookies
         extracted_cookies = {}
