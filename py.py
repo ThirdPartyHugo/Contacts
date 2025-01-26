@@ -32,14 +32,12 @@ def sso_login():
         return jsonify({"error": "Missing state or nonce"}), 400
 
     current_time = int(time.time())
-    expiration_time = current_time + 900  # Token expires in 15 minutes
-    print(shared_data1,flush=True)
-    # Generate a JWT payload
+    expiration_time = current_time + 900  
     
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": shared_data1,  # User email or ID
+        "sub": shared_data1,  
         "name": shared_data2,
         "email": shared_data1,
         "nonce": nonce
@@ -48,9 +46,6 @@ def sso_login():
     # Generate JWT token
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
-    # Store the JWT token in a session cookie
-    print(f"Redirecting user to: {FRESHDESK_SSO_URL}?state={state}&id_token={token}",flush=True)
-    print(token,flush=True)
     response = make_response(redirect(f"{FRESHDESK_SSO_URL}?state={state}&id_token={token}"))
 
     
@@ -61,11 +56,8 @@ def sso_login():
 def test_endpoint():
 
     try:
-        # Get the JSON payload from the request
+        
         data = request.get_json()
-
-        # Print the received data (for debugging purposes)
-        print(f"Received data: {data}")
 
         global shared_data1
         global shared_data2
@@ -93,7 +85,6 @@ def test_endpoint():
         driver.get(url)
 
         # Print the final URL after redirection
-        print(driver.current_url,flush=True)
 
         # Print the page content (if needed)
         cookies = driver.get_cookies()
@@ -103,7 +94,6 @@ def test_endpoint():
         for cookie in cookies:
             if cookie['name'] in ['_helpkit_session', 'session_token','user_credentials','session_state']:
                 extracted_cookies[cookie['name']] = cookie['value']
-                print(f"{cookie['name']}: {cookie['value']}", flush=True)
 
         # Clean up
         driver.quit()
