@@ -91,6 +91,7 @@ def test_endpoint():
         for cookie in cookies:
             if cookie['name'] in ['_helpkit_session', 'session_token','user_credentials','session_state']:
                 extracted_cookies[cookie['name']] = cookie['value']
+        driver.delete_all_cookies()
 
         driver.quit()
 
