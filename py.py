@@ -81,12 +81,9 @@ def test_endpoint():
         driver = webdriver.Chrome(options=options)
 
         # Load a page that redirects
-        url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  # This URL redirects 3 times before landing
+        url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  
         driver.get(url)
 
-        # Print the final URL after redirection
-
-        # Print the page content (if needed)
         cookies = driver.get_cookies()
 
         # Filter and print the specific cookies
@@ -95,10 +92,8 @@ def test_endpoint():
             if cookie['name'] in ['_helpkit_session', 'session_token','user_credentials','session_state']:
                 extracted_cookies[cookie['name']] = cookie['value']
 
-        # Clean up
         driver.quit()
-        # Respond with a confirmation message
-        # If cookies were found, generate JavaScript to set them
+
         if extracted_cookies:
             # Prepare an array with both cookies
             cookies_array = [{"name": name, "value": value} for name, value in extracted_cookies.items()]
