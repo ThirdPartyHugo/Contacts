@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify,make_response
+from flask import Flask, request, redirect, jsonify,make_response,session
 import jwt
 import time
 import os
@@ -14,8 +14,6 @@ PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 
 FRESHDESK_SSO_URL = "https://servicevault.myfreshworks.com/sp/OIDC/800493065928406099/implicit"
 
-shared_data1 = None
-shared_data2 = None
 
 
 @app.route('/sso/login', methods=['GET'])
@@ -37,9 +35,9 @@ def sso_login():
     payload = {
         "iat": current_time,
         "exp": expiration_time,
-        "sub": shared_data1,  
-        "name": shared_data2,
-        "email": shared_data1,
+        "sub":  session.get('email'),  
+        "name": session.get('name'),
+        "email":  session.get('email'),
         "nonce": nonce
     }
 
@@ -59,11 +57,10 @@ def test_endpoint():
         
         data = request.get_json()
 
-        global shared_data1
-        global shared_data2
+        session['email'] = data.get('email', None)  # Store email in session
+        session['name'] = data.get('name', None) 
 
-        shared_data1 = data.get('email', None)  # Replace 'email' with the correct key name
-        shared_data2 = data.get('name', None)
+        
 
 
         options = Options()
