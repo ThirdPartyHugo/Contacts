@@ -82,6 +82,7 @@ def test_endpoint():
 
         # Load a page that redirects
         url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  
+        driver.delete_all_cookies()
         driver.get(url)
 
         cookies = driver.get_cookies()
@@ -91,7 +92,7 @@ def test_endpoint():
         for cookie in cookies:
             if cookie['name'] in ['_helpkit_session', 'session_token','user_credentials','session_state']:
                 extracted_cookies[cookie['name']] = cookie['value']
-        driver.delete_all_cookies()
+       
 
         driver.quit()
 
