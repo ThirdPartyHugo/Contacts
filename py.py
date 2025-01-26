@@ -79,11 +79,11 @@ def test_endpoint():
 
         # Load a page that redirects
         url = "https://kyrusagency.freshdesk.com/support/login?type=bot"  
-        driver.delete_all_cookies()
+       
         driver.get(url)
 
         cookies = driver.get_cookies()
-        driver.delete_all_cookies()
+        
 
         # Filter and print the specific cookies
         extracted_cookies = {}
